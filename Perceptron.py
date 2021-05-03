@@ -33,12 +33,16 @@ class Perceptron:
       return train,test
 
     def signum (self,W,X):
-        return np.dot(X,np.transpose(W))
+        y = np.dot(X,np.transpose(W))
+        if y[0,0]>0:
+            return 1
+        else:
+            return -1
 
     def calculate_loss(self,t,y):
          return t-y
 
-    def Training_Phase(self,train):
+    def Training_Phase(self,train,Columns1,Columns2):
       if(self.Bias)==1:
           b=np.ones([1,1])
       else:
@@ -46,14 +50,14 @@ class Perceptron:
 
       for i in range(self.N_Of_epochs):
           for j in range(len(train)):
-              y = self.signum(self.weights,np.concatenate((b,train[j:j+1,:2]),axis=1))
+              y = self.signum(self.weights,np.concatenate((b,train[j:j+1,[Columns1,Columns2]]),axis=1))
 
               if j<30 :
                   t = 1
               else:
                   t = -1
-              if y[0,0] != t:
-               self.weights = self.weights+(self.L_R*self.calculate_loss(t,y[0,0])*np.concatenate((b,train[j:j+1,:2]),axis=1))
+              if y != t:
+               self.weights = self.weights+(self.L_R*self.calculate_loss(t,y)*np.concatenate((b,train[j:j+1,[Columns1,Columns2]]),axis=1))
 
 
 
@@ -68,7 +72,7 @@ class Perceptron:
 
      #draw_line
         plt.figure("XTest_YTest")
-        plt.scatter(test[:20, Columns1], test[20:40, Columns2])
+        plt.scatter(test[:20, Columns1], test[:20, Columns2])
         plt.scatter(test[20:40, Columns1], test[20:40, Columns2])
         point1 = [p1, 0]
         point2 = [6, p2]
@@ -128,8 +132,9 @@ class Perceptron:
 
     def classify(self):
         train,test = self.shuffle()
-        self.Training_Phase(train)
         Columns1, Columns2 = self.Chosen_Features()
+        self.Training_Phase(train,Columns1,Columns2)
         Confusion_Matrix=self.Testing_Phase(test,Columns1,Columns2)
         self.draw_line(test,Columns1,Columns2)
         print("Confusion_Matrix",Confusion_Matrix)
+        print("accuracy is = ", (Confusion_Matrix[0][0] + Confusion_Matrix[1][1]) / 40)
