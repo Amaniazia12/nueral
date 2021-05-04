@@ -14,20 +14,21 @@ class Perceptron:
     def shuffle(self):
       if self.Classes=="C1&C2":
         random.shuffle(self.dataset_F[:50])
-        train = np.concatenate((self.dataset_F [:30, :], self.dataset_F[50:80, :]),axis=0)
         random.shuffle(self.dataset_F[50:100])
+        train = np.concatenate((self.dataset_F [:30, :], self.dataset_F[50:80, :]),axis=0)
         test = np.concatenate((self.dataset_F[30:50, :] , self.dataset_F[80:100, :]),axis=0)
 
       elif self.Classes=="C1&C3":
         random.shuffle(self.dataset_F[:50])
-        train = np.concatenate((self.dataset_F [:30, :], self.dataset_F[100:130, :]),axis=0)
         random.shuffle(self.dataset_F[100:150])
+        train = np.concatenate((self.dataset_F [:30, :], self.dataset_F[100:130, :]),axis=0)
         test = np.concatenate((self.dataset_F[30:50, :] , self.dataset_F[130:150, :]),axis=0)
 
       else:
         random.shuffle(self.dataset_F[50:100])
-        train = np.concatenate((self.dataset_F[50:80, :] , self.dataset_F[100:130, :]),axis=0)
         random.shuffle(self.dataset_F[100:150])
+        train = np.concatenate((self.dataset_F[50:80, :] , self.dataset_F[100:130, :]),axis=0)
+
         test = np.concatenate((self.dataset_F[80:100, :] , self.dataset_F[130:150, :]),axis=0)
 
       return train,test
