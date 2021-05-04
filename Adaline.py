@@ -46,6 +46,10 @@ class Adaline:
     def calculate_loss(self,t,y):
          return t-y
 
+    def NetValue(self, X, W, b):
+        netValue = np.dot(np.concatenate((b, X), axis=1), np.transpose(W))
+        return netValue
+
     def Training_Phase(self,train,Columns1,Columns2):
         MSE=0
         commulativeError=0
@@ -53,30 +57,30 @@ class Adaline:
              b = np.ones([1, 1])
         else:
              b = np.zeros([1, 1])
-        while (MSE >=self.Threshold):
-
-         for i in range(self.N_Of_epochs):
+        for i in range(self.N_Of_epochs):
           for j in range(len(train)):
-
-              y = np.dot(np.concatenate((b,train[j:j+1,[Columns1,Columns2]]),axis=1), np.transpose(self.weights ))
-
+              y = self.NetValue(train[j:j + 1, [Columns1, Columns2]], self.weights, b)
               if j<30 :
                   t = 1
               else:
                   t = -1
               error = self.calculate_loss(y, t)
-              if y != t:
-               self.weights = self.weights+(self.L_R*error*np.concatenate((train[j:j+1,[Columns1,Columns2]]),axis=1))
-          for i in range(len(train)):
-              y = np.dot(train[j:j + 1, [Columns1, Columns2]], np.transpose(self.weights))
-              if j<30 :
+              self.weights = self.weights+(self.L_R*error*np.concatenate((b,(train[j:j+1,[Columns1,Columns2]])),axis=1))
+          for K in range(len(train)):
+              y = np.dot(np.concatenate((b,(train[j:j+1,[Columns1,Columns2]])),axis=1), np.transpose(self.weights))
+              if K<30 :
                   t = 1
               else:
                   t = -1
-              if y != t:
-               commulativeError+=math.sqrt(self.calculate_loss(y,t))
-          MSE=commulativeError/len(train)
+              commulativeError+=(self.calculate_loss(t,y))**2
+              print ("y= ",y,"T=",t)
+          MSE=commulativeError/(2*len(train))
 
+          commulativeError = 0
+          if (MSE < self.Threshold):
+              break
+          else:
+              continue
     def draw_line(self, train, test, Columns1, Columns2):
         # get_points
         b = self.weights[0, 0]
@@ -135,7 +139,6 @@ class Adaline:
         else:
             b = np.zeros([1, 1])
         for j in range(len(test)):
-            print(np.shape(self.weights))
 
             y = self.signum(self.weights,np.concatenate((b, test[j:j + 1, [Columns1,Columns2]]), axis=1))
 
