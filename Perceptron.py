@@ -62,25 +62,33 @@ class Perceptron:
 
 
 
-    def draw_line(self,test,Columns1,Columns2):
-    #get_points
-        b = self.weights[0,0]
-        w1 = self.weights[0,1]
-        w2 = self.weights[0,2]
-        p1=(-1*b)/w1
-        p2=((-1*b)-(w1*6))/w2
 
-     #draw_line
+    def draw_line(self, train, test, Columns1, Columns2):
+        # get_points
+        b = self.weights[0, 0]
+        w1 = self.weights[0, 1]
+        w2 = self.weights[0, 2]
+
+        min_x1 = min(train[:, Columns1]) - 1
+        max_x1 = max(train[:, Columns1]) + 1
+        x_values = [min_x1, max_x1]
+        y_values = (-1 * b - np.multiply(w1, x_values)) / w2
+
+        # draw_line between training data
+        plt.figure("XTtain_YTrain")
+        plt.scatter(train[:30, Columns1], train[:30, Columns2])
+        plt.scatter(train[30:60, Columns1], train[30:60, Columns2])
+        plt.plot(x_values, y_values)
+        plt.xlabel("XTrain")
+        plt.ylabel("YTrain")
+        plt.show()
+        # draw_line between testing data
         plt.figure("XTest_YTest")
         plt.scatter(test[:20, Columns1], test[:20, Columns2])
         plt.scatter(test[20:40, Columns1], test[20:40, Columns2])
-        point1 = [p1, 0]
-        point2 = [6, p2]
-        x_values = [point1[0], point2[0]]
-        y_values = [point1[1], point2[1]]
         plt.plot(x_values, y_values)
         plt.xlabel("XTest")
-        plt.ylabel("Ytest")
+        plt.ylabel("YTest")
         plt.show()
 
     def Chosen_Features(self):
@@ -113,7 +121,7 @@ class Perceptron:
             b = np.ones([1, 1])
         else:
             b = np.zeros([1, 1])
-        print(len(test))
+        # print(len(test))
         for j in range(len(test)):
             y = self.signum(self.weights, np.concatenate((b, test[j:j + 1, [Columns1,Columns2]]), axis=1))
             if j < 20:
@@ -135,6 +143,6 @@ class Perceptron:
         Columns1, Columns2 = self.Chosen_Features()
         self.Training_Phase(train,Columns1,Columns2)
         Confusion_Matrix=self.Testing_Phase(test,Columns1,Columns2)
-        self.draw_line(test,Columns1,Columns2)
-        print("Confusion_Matrix",Confusion_Matrix)
+        self.draw_line(train,test,Columns1,Columns2)
+        print("Confusion_Matrix = \n",Confusion_Matrix)
         print("accuracy is = ", (Confusion_Matrix[0][0] + Confusion_Matrix[1][1]) / 40)

@@ -64,9 +64,9 @@ class Adaline:
                   t = 1
               else:
                   t = -1
-              if y!=t:
-                error = self.calculate_loss(t, y)
-                self.weights = self.weights+(self.L_R*error*np.concatenate((b,(train[j:j+1,[Columns1,Columns2]])),axis=1))
+
+              error = self.calculate_loss(t, y)
+              self.weights = self.weights+(self.L_R*error*np.concatenate((b,(train[j:j+1,[Columns1,Columns2]])),axis=1))
               #print(np.concatenate((b,(train[j:j+1,[Columns1,Columns2]]))))
           for K in range(len(train)):
               y = np.dot(np.concatenate((b,(train[K:K+1,[Columns1,Columns2]])),axis=1), np.transpose(self.weights))
@@ -77,12 +77,11 @@ class Adaline:
               commulativeError+=(self.calculate_loss(t,y))**2
               #print ("y= ",y,"T=",t)
           MSE=commulativeError/(2*len(train))
-
+          print("MSE = ",MSE)
           commulativeError = 0
           if (MSE < self.Threshold):
               break
-          else:
-              continue
+
 
     def draw_line(self, train, test, Columns1, Columns2):
         # get_points
@@ -103,7 +102,7 @@ class Adaline:
         plt.xlabel("XTrain")
         plt.ylabel("YTrain")
         plt.show()
-
+        # draw_line between testing data
         plt.figure("XTest_YTest")
         plt.scatter(test[:20, Columns1], test[:20, Columns2])
         plt.scatter(test[20:40, Columns1], test[20:40, Columns2])
@@ -145,7 +144,7 @@ class Adaline:
         for j in range(len(test)):
 
             y = self.signum(self.weights,np.concatenate((b, test[j:j + 1, [Columns1,Columns2]]), axis=1))
-
+            print("y = ",y)
             if j < 20:
               if y>0:
                  C1_C1+=1
@@ -156,7 +155,7 @@ class Adaline:
                 C2_C1+=1
               elif y<0:
                 C2_C2+=1
-
+        print("\nweights = ",self.weights)
         return np.array([[C1_C1,C1_C2],[C2_C1,C2_C2]])
 
 
@@ -166,5 +165,6 @@ class Adaline:
         self.Training_Phase(train,Columns1,Columns2)
         Confusion_Matrix=self.Testing_Phase(test,Columns1,Columns2)
         self.draw_line(train,test,Columns1,Columns2)
-        print("Confusion_Matrix",Confusion_Matrix)
-        print("accuracy is = ", (Confusion_Matrix[0][0] + Confusion_Matrix[1][1]) / len(test))
+        print("\nConfusion_Matrix = \n",Confusion_Matrix)
+        print("accuracy is = ", ((Confusion_Matrix[0][0] + Confusion_Matrix[1][1]) / len(test))*100,"%")
+        print("done ************************************************************************************")
