@@ -36,9 +36,9 @@ class Adaline:
 
     def signum (self,W,X):
         y = np.dot(X,np.transpose(W))
-        if y[0,0]>0:
+        if y>0:
             return 1
-        elif y[0,0]== 0 :
+        elif y== 0 :
             return 0
         else :
             return -1
@@ -64,16 +64,18 @@ class Adaline:
                   t = 1
               else:
                   t = -1
-              error = self.calculate_loss(y, t)
-              self.weights = self.weights+(self.L_R*error*np.concatenate((b,(train[j:j+1,[Columns1,Columns2]])),axis=1))
+              if y!=t:
+                error = self.calculate_loss(t, y)
+                self.weights = self.weights+(self.L_R*error*np.concatenate((b,(train[j:j+1,[Columns1,Columns2]])),axis=1))
+              #print(np.concatenate((b,(train[j:j+1,[Columns1,Columns2]]))))
           for K in range(len(train)):
-              y = np.dot(np.concatenate((b,(train[j:j+1,[Columns1,Columns2]])),axis=1), np.transpose(self.weights))
+              y = np.dot(np.concatenate((b,(train[K:K+1,[Columns1,Columns2]])),axis=1), np.transpose(self.weights))
               if K<30 :
                   t = 1
               else:
                   t = -1
               commulativeError+=(self.calculate_loss(t,y))**2
-              print ("y= ",y,"T=",t)
+              #print ("y= ",y,"T=",t)
           MSE=commulativeError/(2*len(train))
 
           commulativeError = 0
@@ -81,6 +83,7 @@ class Adaline:
               break
           else:
               continue
+
     def draw_line(self, train, test, Columns1, Columns2):
         # get_points
         b = self.weights[0, 0]
@@ -89,25 +92,26 @@ class Adaline:
 
         min_x1 = min(train[:, Columns1]) - 1
         max_x1 = max(train[:, Columns1]) + 1
-        x1_values = [min_x1, max_x1]
-        x2_values = (-1 * b - np.multiply(w1, x1_values)) / w2
+        x_values = [min_x1, max_x1]
+        y_values = (-1 * b - np.multiply(w1, x_values)) / w2
 
         # draw_line between training data
         plt.figure("XTtain_YTrain")
         plt.scatter(train[:30, Columns1], train[:30, Columns2])
         plt.scatter(train[30:60, Columns1], train[30:60, Columns2])
-        plt.plot(x1_values, x2_values)
-        plt.xlabel("X1Train")
-        plt.ylabel("x2Train")
+        plt.plot(x_values, y_values)
+        plt.xlabel("XTrain")
+        plt.ylabel("YTrain")
         plt.show()
 
         plt.figure("XTest_YTest")
         plt.scatter(test[:20, Columns1], test[:20, Columns2])
         plt.scatter(test[20:40, Columns1], test[20:40, Columns2])
-        plt.plot(x1_values, x2_values)
-        plt.xlabel("X1Test")
-        plt.ylabel("x2Test")
+        plt.plot(x_values, y_values)
+        plt.xlabel("XTest")
+        plt.ylabel("YTest")
         plt.show()
+
     def Chosen_Features(self):
         if self.Features=="X1_X2":
             Columns1=0

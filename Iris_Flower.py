@@ -203,12 +203,7 @@ LThreshold.place(x=20,y=170)
 EThreshold.place(x=130,y=170)
 Checkbias.place(x=20,y=200)
 collectdata.place(x=200,y=250)
-
 mainloop()
-
-
-
-
 #Function_collectdata that is the action pf button, the start of program,#####line_41
 
 

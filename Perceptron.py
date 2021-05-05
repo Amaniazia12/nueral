@@ -48,7 +48,6 @@ class Perceptron:
           b=np.ones([1,1])
       else:
           b=np.zeros([1,1])
-
       for i in range(self.N_Of_epochs):
           for j in range(len(train)):
               y = self.signum(self.weights,np.concatenate((b,train[j:j+1,[Columns1,Columns2]]),axis=1))
